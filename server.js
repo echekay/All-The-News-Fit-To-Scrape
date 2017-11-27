@@ -45,13 +45,12 @@ app.get("/scrape", function(req, res) {
   request("https://arstechnica.com/", function(error, response, html) {
     var $ = cheerio.load(html);
     // Find how to grab each element from the site.
-    $().each(function(i, element) {
+    $("article.tease-row header").each(function(i, element) {
       var result = {};
-      // Rework the 2 lines of code below to fit the scrape requirements.
-      result.title = $(this).children("a").text();
-      result.link = $(this).children("a").attr("href");
-      result.summary = $(this).children("a").summary();
-      result.byline = $(this).children("a").byline();
+
+      result.title = $(this).find("a").text();
+      result.summary = $(this).find("p").text();
+      result.link = $(this).find("a").attr("href");
       var entry = new Article(result);
       entry.save(function(err, doc) {
         if (err) {
@@ -109,3 +108,8 @@ app.post("/articles/:id", function(req, res) {
     }
   })
 })
+
+// Listen on port 3000
+app.listen(3000, function() {
+  console.log("App running on port 3000!");
+});
